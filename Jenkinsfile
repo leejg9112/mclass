@@ -19,21 +19,21 @@ pipeline{
     }
 
     stages {
-        stage('Git Checkout') {
+        stage('Git Checkout'){
             setps{ //stage 안에서 실행할 실제 명령어
                 // Jenkins가 연결된 Git 저장소에서 최신 코드 체크아웃
                 checkout scm
             }
         }
 
-        stage('MAven Build') {
+        stage('MAven Build'){
             steps{
                 // TEST는 건너뛰고 Maven 빌드
                 sh "mvn clean package -DskipTests"
                 // sh 'echo Hello' : 리눅스 명령어 실행 
             }
         }
-        stage('Prepare Jar') {
+        stage('Prepare Jar'){
             steps{
                 // 빌드 결과물인 JAR 파일을 지정한 이름(app.jar)
                 sh 'cp target/demo-0.0.1-SNAPSHOT.jar $(JAR_FILE_NAME)'
