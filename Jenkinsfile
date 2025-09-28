@@ -45,9 +45,9 @@ pipeline{
                 // Jenkins가 원격 서버에 SSH 접속할 수 있도록 sshagent 사용
                 sshagent(credentials:[env.SSH_CREDENTIALS_ID]){
                     // 원격 서버에 배포 디렉토리 만듬(없으면 새로만듬)
-                    sh "ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null ${REMOTE_USER}@${REMOTE_HOST} \"mkdir -p ${REMOTE_DIR}\""
+                    sh "ssh -i /var/lib/jenkins/.ssh/jenkins_rsa_key -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null ${REMOTE_USER}@${REMOTE_HOST} \"mkdir -p ${REMOTE_DIR}\""
                     // JAR 파일과 Dockerfile을 원격 서버에 복사
-                    sh "scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null ${JAR_FILE_NAME} Dockerfile ${REMOTE_USER}@${REMOTE_HOST}:${REMOTE_DIR}/"
+                    sh "scp -i /var/lib/jenkins/.ssh/jenkins_rsa_key -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null ${JAR_FILE_NAME} Dockerfile ${REMOTE_USER}@${REMOTE_HOST}:${REMOTE_DIR}/"
                 }
             }
         }
@@ -57,7 +57,7 @@ pipeline{
                 sshagent(credentials:[env.SSH_CREDENTIALS_ID]){
                     // 원격 서버에서 도커 컨테이너를 제거하고 새로 빌드 및 실행
                     sh """
-                    ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null ${REMOTE_USER}@${REMOTE_HOST} << ENDSSH
+                    ssh -i /var/lib/jenkins/.ssh/jenkins_rsa_key -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null ${REMOTE_USER}@${REMOTE_HOST} << ENDSSH
                         cd ${REMOTE_DIR} || exit 1                          # 복사한 디렉토리로 이동
                         docker rm -f ${CONTAINER_NAME} || true             # 이전에 실행 중인 컨테이너 삭제 (없으면 무시)
                         docker build -t ${DOCKER_IMAGE} .                  # 현재 디렉토리에서 Docker 이미지 빌드
