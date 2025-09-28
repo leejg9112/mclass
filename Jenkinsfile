@@ -62,7 +62,7 @@ pipeline{
                         docker rm -f ${CONTAINER_NAME} || true             # 이전에 실행 중인 컨테이너 삭제 (없으면 무시)
                         docker build -t ${DOCKER_IMAGE} .                  # 현재 디렉토리에서 Docker 이미지 빌드
                         docker run -d --name ${CONTAINER_NAME} -p ${PORT}:${PORT} ${DOCKER_IMAGE} # 새 컨테이너 실행
-                    EoF
+                        EoF
                     """
                 }
             }
