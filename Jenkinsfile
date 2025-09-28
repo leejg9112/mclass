@@ -18,7 +18,7 @@ pipeline{
         SSH_CREDENTIALS_ID = "3e2fead2-8d5b-4250-aa73-a0a7c25a46f7" // Jenkins SSH 자격 증명 ID
     }
 
-    stages {
+    stages{
         stage('Git Checkout'){
             setps{ //stage 안에서 실행할 실제 명령어
                 // Jenkins가 연결된 Git 저장소에서 최신 코드 체크아웃
