@@ -1,7 +1,7 @@
 pipeline {
     agent any // 어떤 에이전트에서든 실행 
     
-    tool {
+    Tool {
         maven 'Maven' // Jenkins에 등록된 Maven 사용
     }
     environment {
