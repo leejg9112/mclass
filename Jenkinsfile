@@ -1,10 +1,10 @@
-pipeline {
+pipeline{
     agent any // 어떤 에이전트에서든 실행 
     
-    Tool {
+    Tool{
         maven 'Maven' // Jenkins에 등록된 Maven 사용
     }
-    environment {
+    environment{
         //배포에 필요한 변수 설정
         DOCKER_IMAGE = "demo-app"   // 도커 이미지 이름
         CONTAINER_NAME = "springboot-container" // 도커 컨테이너 이름
@@ -20,30 +20,30 @@ pipeline {
 
     stages {
         stage('Git Checkout') {
-            setps { //stage 안에서 실행할 실제 명령어
+            setps{ //stage 안에서 실행할 실제 명령어
                 // Jenkins가 연결된 Git 저장소에서 최신 코드 체크아웃
                 checkout scm
             }
         }
 
         stage('MAven Build') {
-            steps {
+            steps{
                 // TEST는 건너뛰고 Maven 빌드
                 sh "mvn clean package -DskipTests"
                 // sh 'echo Hello' : 리눅스 명령어 실행 
             }
         }
         stage('Prepare Jar') {
-            steps {
+            steps{
                 // 빌드 결과물인 JAR 파일을 지정한 이름(app.jar)
                 sh 'cp target/demo-0.0.1-SNAPSHOT.jar $(JAR_FILE_NAME)'
             }
         }
 
         stage('Copy to Remote Server'){
-            steps {
+            steps{
                 // Jenkins가 원격 서버에 SSH 접속할 수 있도록 sshagent 사용
-                sshagent (credential:[environment.SSH_CREDENTIALS_ID]) {
+                sshagent(credential:[environment.SSH_CREDENTIALS_ID]) {
                     // 원격 서버에 배포 디렉토리 만듬(없으면 새로만듬)
                     sh "ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null ${REMOTE_USER}@${REMOTE_HOST} \"mkdir -p ${REMOTE_DIR}\""
                     // JAR 파일과 Dockerfile을 원격 서버에 복사
@@ -53,8 +53,8 @@ pipeline {
         }
 
         stage('Remote Docker Build & Deploy'){
-            steps {
-                sshagent (credential:[environment.SSH_CREDENTIALS_ID]) {
+            steps{
+                sshagent(credential:[environment.SSH_CREDENTIALS_ID]) {
                     // 원격 서버에서 도커 컨테이너를 제거하고 새로 빌드 및 실행
                     sh """
                     ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null ${REMOTE_USER}@${REMOTE_HOST} << ENDSSH
